@@ -29,13 +29,19 @@ main button {
     color: #fff;
 }
 
-main button:hover {
+main button.add-active:hover {
     opacity: 0.8;
 }
 
-main button.add {
+main button.add-active {
     background-color: #007bff;
     border: 1px solid  #007bff;
+    margin-left: 2px;
+}
+
+main button.add-inactive {
+    background-color: #adacac;
+    border: 1px solid  #686868;
     margin-left: 2px;
 }
 
@@ -46,7 +52,7 @@ main button.clear {
     margin: auto;
 }
 
-main button:focus {
+main button.add-active:focus {
     outline:0;
 }
 
