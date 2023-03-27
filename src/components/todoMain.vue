@@ -3,14 +3,23 @@
         <main id="app">
             <section class="todo-list">
                 <h3>To-do List</h3>
-                <div v-if="todoList" class="all-todos">
+                <div v-if="todoList.length > 0" class="all-todos">
                     <div
                         v-for="todo in todoList"
-                        :key="todo.text"
+                        :key="todo.id"
                         class="single-todo"
                         :class="{ done: todo.done }"
                     >
                         <p>{{ todo.text }}</p>
+                        <button
+                            v-if="todo.done"
+                            class="delete"
+                            @click="deleteTodo(todo)">
+                        </button>
+                        <button
+                            v-else class="done"
+                            @click="doneTodo(todo)">
+                        </button>
                     </div>
                     <button class="clear" @click="clearAllTodos">Clear All</button>
                 </div>
@@ -60,19 +69,39 @@ export default {
   },
   mounted() {
     this.todoList = this.loadTodoList ? this.loadTodoList : [];
+    this.$refs.todoAdd.focus();
   },
   methods: {
+    updateLocalStorage(data) {
+      localStorage.setItem('todoList', JSON.stringify(data));
+    },
     addTodo() {
+      console.log(this.todoList.length);
       const todo = {
         text: this.$refs.todoAdd.value,
         done: false,
+        id: this.todoList.length === 0 ? 1 : this.todoList[this.todoList.length - 1].id + 1,
       };
       this.todoList.push(todo);
-      localStorage.setItem('todoList', JSON.stringify(this.todoList));
+      this.updateLocalStorage(this.todoList);
+      this.newTodo = '';
+      this.$refs.todoAdd.focus();
     },
     clearAllTodos() {
       this.todoList = [];
-      localStorage.setItem('todoList', JSON.stringify(this.todoList));
+      this.updateLocalStorage(this.todoList);
+    },
+    doneTodo(data) {
+      this.todoList.forEach((todo, index) => {
+        if (todo.id === data.id) {
+          this.todoList[index].done = true;
+        }
+      });
+      this.updateLocalStorage(this.todoList);
+    },
+    deleteTodo(data) {
+      this.todoList = this.todoList.filter((todo) => todo.id !== data.id);
+      this.updateLocalStorage(this.todoList);
     },
   },
 };
